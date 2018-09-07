@@ -4,46 +4,36 @@ int res = 30;
 
 float wOffset = 1;
 float wSpeed = 0.25f;
+float wThis, wNext;
 
 float mOffset = 1;
 float mSpeed = 0.1f;
+float mThis, mNext;
 
 void setup()
 {
   //fullScreen();
   size(800, 600);
-  frameRate(20);
+  frameRate(24);
 }
 void draw()
 {
-  background(0);
-  water();
-  mountains();
-}
-
-void water()
-{
-  wOffset -= wSpeed;
-  
-  for(int x = 0; x <= width; x += res)
-  {
-    float hThis = map(sin(x+wOffset), -1, 1, 0.375, 0.4);
-    float hNext = map(sin(x+res+wOffset), -1, 1, 0.375, 0.4);
-    
-    drawMesh(x, hThis, hNext, Ter.water);
-  }
-}
-
-void mountains()
-{
   mOffset += mSpeed;
+  wOffset -= wSpeed;
+  background(0);
   
   for(int x = 0; x <= width; x += res)
   {
-    float hThis = noise((map(x, 0, width, 0, width/res)+mOffset) * 0.04f);
-    float hNext = noise((map(x+res, 0, width, 0, width/res)+mOffset) * 0.04f);
+    wThis = map(sin(x+wOffset), -1, 1, 0.375, 0.4);
+    wNext = map(sin(x+res+wOffset), -1, 1, 0.375, 0.4);
     
-    drawMesh(x, hThis, hNext, Ter.mountain);
+    mThis = noise((map(x, 0, width, 0, width/res)+mOffset) * 0.04f);
+    mNext = noise((map(x+res, 0, width, 0, width/res)+mOffset) * 0.04f);
+    
+    if(wThis > mThis || wNext > mNext)
+      drawMesh(x, wThis, wNext, Ter.water);
+    
+    drawMesh(x, mThis, mNext, Ter.mountain);
   }
 }
 
